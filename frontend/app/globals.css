@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/* ── Brand tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Blues */
+  --blue-950: #0a1628;
+  --blue-900: #0f2248;
+  --blue-800: #1e3a8a;
+  --blue-700: #1d4ed8;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-400: #60a5fa;
+  --blue-100: #dbeafe;
+
+  /* Yellows */
+  --yellow-600: #ca8a04;
+  --yellow-500: #eab308;
+  --yellow-400: #facc15;
+  --yellow-300: #fde047;
+
+  /* Surface */
+  --surface-bg: #0a1628;
+  --surface-card: rgba(255, 255, 255, 0.06);
+  --surface-border: rgba(255, 255, 255, 0.12);
+
+  --foreground: #f1f5f9;
+  --muted: #94a3b8;
+}
+
+@theme inline {
+  --color-background: var(--surface-bg);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Every interactive element gets a pointer cursor project-wide. */
+a,
+button,
+[role="button"],
+select,
+label[for],
+summary {
+  cursor: pointer;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(135deg, #0a1628 0%, #1e3a8a 60%, #0f172a 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans, system-ui, sans-serif);
+  min-height: 100vh;
+}
+
+/* ── Glass utilities ────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.glass-sidebar {
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Focus ring ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ── Animated gradient orbs (background decoration) ────────────────────── */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-orb-blue {
+  background: radial-gradient(circle, #2563eb, transparent 70%);
+  width: 600px;
+  height: 600px;
+  top: -100px;
+  left: -100px;
+}
+
+.bg-orb-yellow {
+  background: radial-gradient(circle, #eab308, transparent 70%);
+  width: 400px;
+  height: 400px;
+  bottom: -80px;
+  right: -80px;
+}
+
+/* ── Utility helpers ────────────────────────────────────────────────────── */
+.text-muted {
+  color: var(--muted);
+}
+
+.brand-gradient {
+  background: linear-gradient(90deg, #3b82f6, #eab308);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge-yellow {
+  background: rgba(234, 179, 8, 0.15);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.badge-blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
