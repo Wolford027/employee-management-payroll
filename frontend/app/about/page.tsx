@@ -1,6 +1,8 @@
-import Link from "next/link";
 import { ArrowRight, Zap, Code2, Database, Layout, ShieldCheck, FileText, GitBranch } from "lucide-react";
 import { PublicNav } from "@/components/layout/PublicNav";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { CtaLink } from "@/components/marketing/CtaButton";
+import { SectionHeading } from "@/components/marketing/SectionHeading";
 
 const STACK = [
   {
@@ -70,7 +72,7 @@ const PRINCIPLES = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <PublicNav />
 
       {/* ── Header ── */}
@@ -121,10 +123,11 @@ export default function AboutPage() {
 
       {/* ── Design principles ── */}
       <section className="px-4 pb-24 max-w-6xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold text-white">Design principles</h2>
-          <p className="mt-3 text-slate-400">The decisions behind every line of code.</p>
-        </div>
+        <SectionHeading
+          title="Design principles"
+          subtitle="The decisions behind every line of code."
+          className="mb-14"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {PRINCIPLES.map(({ icon: Icon, title, desc, color }) => (
@@ -152,10 +155,11 @@ export default function AboutPage() {
 
       {/* ── Tech stack ── */}
       <section className="px-4 pb-28 max-w-5xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold text-white">Tech stack</h2>
-          <p className="mt-3 text-slate-400">What&apos;s under the hood.</p>
-        </div>
+        <SectionHeading
+          title="Tech stack"
+          subtitle="What's under the hood."
+          className="mb-14"
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {STACK.map(({ category, color, items }) => (
@@ -199,26 +203,16 @@ export default function AboutPage() {
           Create a free account or explore the live demo with seeded data.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-blue-950 hover:opacity-90 transition-all"
-            style={{ background: "linear-gradient(135deg,#eab308,#ca8a04)", boxShadow: "0 4px 16px rgba(234,179,8,0.3)" }}
-          >
+          <CtaLink href="/register" variant="primary">
             Get started free <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-white transition-all hover:bg-white/8"
-            style={{ border: "1px solid rgba(255,255,255,0.18)" }}
-          >
+          </CtaLink>
+          <CtaLink href="/pricing" variant="outline">
             View pricing
-          </Link>
+          </CtaLink>
         </div>
       </section>
 
-      <footer className="text-center py-8 text-xs text-slate-600" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        © {new Date().getFullYear()} EMS Payroll. Built with Laravel 12 & Next.js 16.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

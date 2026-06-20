@@ -21,7 +21,7 @@
         .totals .grand { font-size: 14px; font-weight: bold; border-top: 2px solid #111827; }
         .cols { width: 100%; }
         .cols td { width: 50%; vertical-align: top; padding-right: 16px; }
-        .net-box { margin-top: 18px; background: #111827; color: #fff; padding: 12px 16px; }
+        .net-box { margin-top: 18px; border-top: 2px solid #111827; padding: 12px 16px; }
         .net-box .amount { font-size: 22px; font-weight: bold; }
         .footer { margin-top: 28px; font-size: 10px; color: #9ca3af; text-align: center; }
     </style>

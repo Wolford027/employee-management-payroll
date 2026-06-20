@@ -22,17 +22,20 @@ function StatCard({
 }: {
   label: string;
   value: React.ReactNode;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
 }) {
   return (
     <Card>
       <CardContent className="flex items-center gap-4 p-5">
-        <div className="rounded-lg bg-gray-900 p-3 text-white">
-          <Icon className="h-5 w-5" />
+        <div
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.25)" }}
+        >
+          <Icon className="h-5 w-5" style={{ color: "#60a5fa" }} />
         </div>
-        <div>
-          <p className="text-sm">{label}</p>
-          <p className="text-2xl font-bold text-gray-500">{value}</p>
+        <div className="min-w-0">
+          <p className="text-sm text-slate-400">{label}</p>
+          <p className="text-2xl font-bold text-white leading-tight">{value}</p>
         </div>
       </CardContent>
     </Card>

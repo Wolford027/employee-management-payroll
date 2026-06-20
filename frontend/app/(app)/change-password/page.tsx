@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { authService } from "@/services/auth";
 import { useAuthStore } from "@/stores/authStore";
 import { apiErrorMessage } from "@/lib/api";
+import { RedirectingOverlay } from "@/components/auth/RedirectingOverlay";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,7 @@ export default function ChangePasswordPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [pending, setPending] = useState(false);
+  const [done, setDone] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +73,7 @@ export default function ChangePasswordPage() {
       const updated = await authService.updateProfile({ password, password_confirmation: confirm });
       setUser(updated);
       toast.success("Password updated. Welcome!");
+      setDone(true);
       router.replace("/dashboard");
     } catch (err) {
       toast.error(apiErrorMessage(err));
@@ -78,6 +81,8 @@ export default function ChangePasswordPage() {
       setPending(false);
     }
   };
+
+  if (done) return <RedirectingOverlay />;
 
   return (
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">

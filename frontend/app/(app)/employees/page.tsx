@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
@@ -55,7 +56,7 @@ export default function EmployeesPage() {
       <Card className="p-4">
         <div className="mb-4 flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[220px]">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
             <Input
               className="pl-9"
               placeholder="Search name, code, email..."
@@ -66,8 +67,8 @@ export default function EmployeesPage() {
               }}
             />
           </div>
-          <select
-            className="h-9 rounded-md border border-gray-300 px-3 text-sm"
+          <Select
+            className="w-auto min-w-[150px]"
             value={status}
             onChange={(e) => {
               setStatus(e.target.value);
@@ -78,7 +79,7 @@ export default function EmployeesPage() {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="archived">Archived</option>
-          </select>
+          </Select>
         </div>
 
         {isLoading ? (
@@ -147,7 +148,7 @@ export default function EmployeesPage() {
                                 });
                               }}
                             >
-                              <Trash2 className="h-4 w-4 text-red-600" />
+                              <Trash2 className="h-4 w-4 text-red-400" />
                             </Button>
                           </>
                         )}
@@ -157,7 +158,7 @@ export default function EmployeesPage() {
                 ))}
                 {data?.data.length === 0 && (
                   <TR>
-                    <TD colSpan={7} className="py-8 text-center text-gray-500">
+                    <TD colSpan={7} className="py-8 text-center text-slate-500">
                       No employees found.
                     </TD>
                   </TR>

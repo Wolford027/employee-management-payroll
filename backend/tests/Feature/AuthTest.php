@@ -59,3 +59,40 @@ it('logs out and the response is successful', function () {
         ->assertOk()
         ->assertJsonPath('message', 'Logged out successfully.');
 });
+
+it('lets a user with a forced password change set a new password without the current one', function () {
+    $user = User::factory()->create(['force_password_change' => true]);
+
+    $this->actingAs($user, 'sanctum')
+        ->putJson('/api/auth/profile', [
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ])
+        ->assertOk();
+
+    expect($user->refresh()->force_password_change)->toBeFalse();
+    expect(Hash::check('NewPassword123!', $user->password))->toBeTrue();
+});
+
+it('requires the current password when a non-forced user changes their password', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('OldPassword123!'),
+        'force_password_change' => false,
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+        ->putJson('/api/auth/profile', [
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('current_password');
+
+    $this->actingAs($user, 'sanctum')
+        ->putJson('/api/auth/profile', [
+            'current_password' => 'OldPassword123!',
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ])
+        ->assertOk();
+});

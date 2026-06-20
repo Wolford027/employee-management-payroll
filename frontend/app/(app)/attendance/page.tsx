@@ -83,7 +83,7 @@ export default function AttendancePage() {
                         {canManage && (
                           <>
                             <Button variant="ghost" size="icon" onClick={() => openEdit(r)}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="icon" onClick={() => confirm("Delete record?") && del.mutate(r.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => confirm("Delete record?") && del.mutate(r.id)}><Trash2 className="h-4 w-4 text-red-400" /></Button>
                           </>
                         )}
                       </div>

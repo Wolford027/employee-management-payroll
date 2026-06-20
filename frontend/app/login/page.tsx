@@ -8,11 +8,16 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Suspense } from "react";
-import { Eye, EyeOff, Zap } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { authService } from "@/services/auth";
 import { apiErrorMessage } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { RedirectingOverlay } from "@/components/auth/RedirectingOverlay";
+import { Field } from "@/components/common/Field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -41,60 +46,29 @@ function LoginForm() {
     onError: (err) => toast.error(apiErrorMessage(err, "Login failed")),
   });
 
-  return (
-    <div className="glass-strong rounded-2xl w-full max-w-md p-8">
-      {/* Logo / Brand */}
-      <div className="mb-8 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-          style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)" }}>
-          <Zap className="w-7 h-7 text-yellow-400" />
-        </div>
-        <h1 className="text-2xl font-bold text-white">EMS Payroll</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-          Sign in to your account
-        </p>
-      </div>
+  if (mutation.isSuccess) return <RedirectingOverlay />;
 
+  return (
+    <AuthCard title="Welcome back" subtitle="Sign in to your account">
       <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-5">
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-blue-100 mb-1.5">
-            Email address
-          </label>
-          <input
-            id="email"
+        <Field label="Email address" error={form.formState.errors.email?.message}>
+          <Input
             type="email"
             autoComplete="email"
-            {...form.register("email")}
-            className="w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-400 transition-all outline-none focus:ring-2 focus:ring-blue-500"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
+            className="h-11"
             placeholder="you@example.com"
+            {...form.register("email")}
           />
-          {form.formState.errors.email && (
-            <p className="mt-1 text-xs text-red-400">{form.formState.errors.email.message}</p>
-          )}
-        </div>
+        </Field>
 
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-medium text-blue-100 mb-1.5">
-            Password
-          </label>
+        <Field label="Password" error={form.formState.errors.password?.message}>
           <div className="relative">
-            <input
-              id="password"
+            <Input
               type={showPass ? "text" : "password"}
               autoComplete="current-password"
-              {...form.register("password")}
-              className="w-full rounded-xl px-4 py-2.5 pr-11 text-sm text-white placeholder-slate-400 transition-all outline-none focus:ring-2 focus:ring-blue-500"
-              style={{
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.15)",
-              }}
+              className="h-11 pr-11"
               placeholder="••••••••"
+              {...form.register("password")}
             />
             <button
               type="button"
@@ -104,63 +78,47 @@ function LoginForm() {
               {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-          {form.formState.errors.password && (
-            <p className="mt-1 text-xs text-red-400">{form.formState.errors.password.message}</p>
-          )}
-        </div>
+        </Field>
 
-        {/* Submit */}
-        <button
+        <Button
           type="submit"
+          variant="yellow"
+          size="lg"
+          className="w-full"
           disabled={mutation.isPending}
-          className="w-full rounded-xl py-2.5 text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{
-            background: mutation.isPending
-              ? "rgba(234,179,8,0.4)"
-              : "linear-gradient(135deg, #eab308, #ca8a04)",
-            color: "#0a1628",
-            boxShadow: "0 4px 16px rgba(234,179,8,0.3)",
-          }}
         >
           {mutation.isPending ? "Signing in…" : "Sign in"}
-        </button>
+        </Button>
       </form>
 
-      {/* Footer links */}
-      <div className="mt-6 flex justify-between text-sm" style={{ color: "var(--muted)" }}>
-        <Link
-          href="/forgot-password"
-          className="hover:text-blue-400 transition-colors"
-        >
+      <div className="mt-6 flex justify-between text-sm text-slate-400">
+        <Link href="/forgot-password" className="hover:text-blue-400 transition-colors">
           Forgot password?
         </Link>
-        <Link
-          href="/register"
-          className="hover:text-blue-400 transition-colors"
-        >
+        <Link href="/register" className="hover:text-blue-400 transition-colors">
           Create account
         </Link>
       </div>
 
-      {/* Demo hint */}
-      <p className="mt-6 text-center text-xs rounded-lg py-2 px-3"
+      <p
+        className="mt-6 text-center text-xs rounded-lg py-2 px-3"
         style={{
           background: "rgba(59,130,246,0.1)",
           border: "1px solid rgba(59,130,246,0.2)",
           color: "#93c5fd",
-        }}>
-        Demo: <span className="font-medium">admin@example.com</span> / <span className="font-medium">password</span>
+        }}
+      >
+        Demo: <span className="font-medium">admin@example.com</span> /{" "}
+        <span className="font-medium">password</span>
       </p>
-    </div>
+    </AuthCard>
   );
 }
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={null}>
-        <LoginForm />
-      </Suspense>
-    </div>
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

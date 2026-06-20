@@ -14,6 +14,10 @@ export const Select = React.forwardRef<
     style={{
       background: "rgba(255,255,255,0.07)",
       border: "1px solid rgba(255,255,255,0.14)",
+      // The options popup is rendered natively by the browser/OS, not by our CSS —
+      // this tells it to paint that popup (and other native controls) in dark mode
+      // instead of the default light one, so it matches the glass theme.
+      colorScheme: "dark",
       ...style,
     }}
     {...props}

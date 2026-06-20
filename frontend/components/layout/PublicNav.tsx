@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
+import { Logo } from "@/components/layout/Logo";
 
 const LINKS = [
   { label: "Home", href: "/" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 function UserMenu() {
@@ -128,15 +130,7 @@ export function PublicNav() {
       }}
     >
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2.5 shrink-0">
-        <div
-          className="flex items-center justify-center w-8 h-8 rounded-lg"
-          style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)" }}
-        >
-          <Zap className="w-4 h-4 text-yellow-400" />
-        </div>
-        <span className="text-base font-bold text-white">EMS Payroll</span>
-      </Link>
+      <Logo size="sm" className="shrink-0" />
 
       {/* Nav links */}
       <nav className="hidden md:flex items-center gap-1 ml-10">

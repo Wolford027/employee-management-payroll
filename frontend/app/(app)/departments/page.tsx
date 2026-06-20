@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
@@ -116,7 +117,7 @@ export default function DepartmentsPage() {
                             size="icon"
                             onClick={() => confirm(`Delete ${d.name}?`) && del.mutate(d.id)}
                           >
-                            <Trash2 className="h-4 w-4 text-red-600" />
+                            <Trash2 className="h-4 w-4 text-red-400" />
                           </Button>
                         </>
                       )}
@@ -141,10 +142,10 @@ export default function DepartmentsPage() {
             <Textarea {...form.register("description")} />
           </Field>
           <Field label="Status">
-            <select className="h-9 w-full rounded-md border border-gray-300 px-3 text-sm" {...form.register("status")}>
+            <Select {...form.register("status")}>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
-            </select>
+            </Select>
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>

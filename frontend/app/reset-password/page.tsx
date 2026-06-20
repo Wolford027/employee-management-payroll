@@ -9,10 +9,10 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authService } from "@/services/auth";
 import { apiErrorMessage } from "@/lib/api";
-import { Button } from "@/components/ui/button";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { Field } from "@/components/common/Field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const schema = z
   .object({
@@ -43,43 +43,33 @@ function ResetForm() {
   });
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Reset password</CardTitle>
-        <CardDescription>{email ? `For ${email}` : "Set a new password"}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="password">New password</Label>
-            <Input id="password" type="password" {...form.register("password")} />
-            {form.formState.errors.password && (
-              <p className="text-xs text-red-600">{form.formState.errors.password.message}</p>
-            )}
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="password_confirmation">Confirm password</Label>
-            <Input id="password_confirmation" type="password" {...form.register("password_confirmation")} />
-            {form.formState.errors.password_confirmation && (
-              <p className="text-xs text-red-600">{form.formState.errors.password_confirmation.message}</p>
-            )}
-          </div>
-          <Button type="submit" className="w-full" disabled={mutation.isPending || !token}>
-            {mutation.isPending ? "Resetting..." : "Reset password"}
-          </Button>
-          {!token && <p className="text-xs text-red-600">Missing reset token in URL.</p>}
-        </form>
-      </CardContent>
-    </Card>
+    <AuthCard title="Reset password" subtitle={email ? `For ${email}` : "Set a new password"}>
+      <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4">
+        <Field label="New password" error={form.formState.errors.password?.message}>
+          <Input type="password" autoComplete="new-password" className="h-11" {...form.register("password")} />
+        </Field>
+        <Field label="Confirm password" error={form.formState.errors.password_confirmation?.message}>
+          <Input type="password" autoComplete="new-password" className="h-11" {...form.register("password_confirmation")} />
+        </Field>
+        <Button
+          type="submit"
+          variant="yellow"
+          size="lg"
+          className="w-full mt-2"
+          disabled={mutation.isPending || !token}
+        >
+          {mutation.isPending ? "Resetting…" : "Reset password"}
+        </Button>
+        {!token && <p className="text-xs text-red-400 text-center">Missing reset token in URL.</p>}
+      </form>
+    </AuthCard>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={null}>
-        <ResetForm />
-      </Suspense>
-    </div>
+    <Suspense fallback={null}>
+      <ResetForm />
+    </Suspense>
   );
 }

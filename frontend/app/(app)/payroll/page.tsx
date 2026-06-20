@@ -96,16 +96,21 @@ export default function PayrollPage() {
               <button
                 key={p.id}
                 onClick={() => setFilterPeriod(String(p.id))}
-                className={`w-full rounded-md border p-3 text-left text-sm ${filterPeriod === String(p.id) ? "border-gray-900 bg-gray-50" : "border-gray-200"}`}
+                className="w-full rounded-lg p-3 text-left text-sm transition-all hover:bg-white/5"
+                style={
+                  filterPeriod === String(p.id)
+                    ? { background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.35)" }
+                    : { border: "1px solid rgba(255,255,255,0.10)" }
+                }
               >
                 <div className="flex justify-between">
-                  <span className="font-medium">{p.name}</span>
+                  <span className="font-medium text-white">{p.name}</span>
                   <Badge status={p.status}>{p.status}</Badge>
                 </div>
-                <div className="mt-1 text-xs text-gray-500">{p.cycle.replace("_", " ")} · {p.payrolls_count ?? 0} payrolls</div>
+                <div className="mt-1 text-xs text-slate-400">{p.cycle.replace("_", " ")} · {p.payrolls_count ?? 0} payrolls</div>
               </button>
             ))}
-            <button onClick={() => setFilterPeriod("")} className="w-full rounded-md p-2 text-left text-xs text-gray-500 hover:bg-gray-50">Show all payrolls</button>
+            <button onClick={() => setFilterPeriod("")} className="w-full rounded-lg p-2 text-left text-xs text-slate-400 hover:bg-white/5 transition-colors">Show all payrolls</button>
           </CardContent>
         </Card>
 
@@ -126,7 +131,7 @@ export default function PayrollPage() {
                     </TD>
                   </TR>
                 ))}
-                {payrollsQ.data?.data.length === 0 && <TR><TD colSpan={6} className="py-8 text-center text-gray-500">No payrolls. Generate some for a period.</TD></TR>}
+                {payrollsQ.data?.data.length === 0 && <TR><TD colSpan={6} className="py-8 text-center text-slate-500">No payrolls. Generate some for a period.</TD></TR>}
               </TBody>
             </Table>
           )}

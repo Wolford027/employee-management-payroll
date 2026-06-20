@@ -13,11 +13,11 @@ import {
   FileText,
   UserCircle,
   LogOut,
-  Zap,
   ChevronRight,
 } from "lucide-react";
 import { useAuth, useLogout } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/layout/Logo";
 
 interface NavItem {
   label: string;
@@ -50,12 +50,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="glass-sidebar hidden w-64 shrink-0 flex-col md:flex sticky top-0 h-screen overflow-hidden">
         {/* Brand */}
-        <div className="flex h-16 items-center gap-3 px-5 border-b border-white/8">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg"
-            style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)" }}>
-            <Zap className="w-4 h-4 text-yellow-400" />
-          </div>
-          <span className="text-lg font-bold text-white">EMS Payroll</span>
+        <div className="flex h-16 items-center px-5 border-b border-white/8">
+          <Logo size="sm" href="/dashboard" />
         </div>
 
         {/* Nav */}
@@ -137,10 +133,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             backdropFilter: "blur(12px)",
           }}
         >
-          <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
-            <span className="font-bold text-white">EMS Payroll</span>
-          </div>
+          <Logo size="sm" href="/dashboard" />
           <button
             onClick={() => logout.mutate()}
             disabled={logout.isPending}

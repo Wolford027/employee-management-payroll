@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Download, Eye } from "lucide-react";
-import { downloadPayslip, payslipsApi, previewPayslip } from "@/services";
+import { payslipsApi, previewPayslip } from "@/services";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { DownloadPayslipButton } from "@/components/payslip/DownloadPayslipButton";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
 import { TableSkeleton } from "@/components/ui/skeleton";
@@ -35,12 +36,12 @@ export default function PayslipsPage() {
                     <TD>
                       <div className="flex justify-end gap-1">
                         <Button variant="ghost" size="icon" title="Preview" onClick={() => previewPayslip(p.id)}><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" title="Download" onClick={() => downloadPayslip(p.id, `${p.payslip_number}.pdf`)}><Download className="h-4 w-4" /></Button>
+                        <DownloadPayslipButton payslipId={p.id} filename={`${p.payslip_number}.pdf`} size="icon"><Download className="h-4 w-4" /></DownloadPayslipButton>
                       </div>
                     </TD>
                   </TR>
                 ))}
-                {data?.data.length === 0 && <TR><TD colSpan={6} className="py-8 text-center text-gray-500">No payslips yet.</TD></TR>}
+                {data?.data.length === 0 && <TR><TD colSpan={6} className="py-8 text-center text-slate-500">No payslips yet.</TD></TR>}
               </TBody>
             </Table>
             {data && <Pagination page={data.meta.current_page} lastPage={data.meta.last_page} total={data.meta.total} onChange={setPage} />}

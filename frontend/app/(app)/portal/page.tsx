@@ -11,7 +11,7 @@ import {
   Hash, Clock, Pencil, X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { downloadPayslip, portal } from "@/services";
+import { portal } from "@/services";
 import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
+import { DownloadPayslipButton } from "@/components/payslip/DownloadPayslipButton";
 import { Field } from "@/components/common/Field";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { Skeleton, TableSkeleton } from "@/components/ui/skeleton";
@@ -379,9 +380,12 @@ export default function PortalPage() {
                       <TD><Badge status={p.status}>{p.status}</Badge></TD>
                       <TD className="text-right">
                         {p.payslip ? (
-                          <Button variant="ghost" size="sm" onClick={() => downloadPayslip(p.payslip!.id, `${p.payslip!.payslip_number}.pdf`)}>
+                          <DownloadPayslipButton
+                            payslipId={p.payslip.id}
+                            filename={`${p.payslip.payslip_number}.pdf`}
+                          >
                             <Download className="h-3.5 w-3.5" /> PDF
-                          </Button>
+                          </DownloadPayslipButton>
                         ) : <span className="text-xs text-slate-500">—</span>}
                       </TD>
                     </TR>
