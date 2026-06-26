@@ -76,3 +76,16 @@ it('owner cannot see other tenants members', function () {
         ->assertOk()
         ->assertJsonPath('meta.total', 1); // only $ownerA
 });
+
+it('owner can delete a non-owner team member', function () {
+    $owner = makeOwner();
+    $member = User::factory()->create(['tenant_id' => $owner->tenant_id]);
+    $member->assignRole('employee');
+
+    $this->actingAs($owner)
+        ->deleteJson("/api/team-members/{$member->id}")
+        ->assertStatus(200)
+        ->assertJsonPath('message', 'Team member removed.');
+
+    expect(User::find($member->id))->toBeNull();
+});
