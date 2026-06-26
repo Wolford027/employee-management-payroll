@@ -55,6 +55,11 @@ it('GET /employees scoped to own tenant only', function () {
         ->getJson('/api/employees')
         ->assertOk()
         ->assertJsonPath('meta.total', 5);
+
+    $this->actingAs($hrB)
+        ->getJson('/api/employees')
+        ->assertOk()
+        ->assertJsonPath('meta.total', 3);
 });
 
 it('cannot GET a department that belongs to another tenant', function () {
