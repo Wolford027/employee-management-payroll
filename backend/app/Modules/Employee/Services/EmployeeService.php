@@ -21,35 +21,44 @@ class EmployeeService
     }
 
     /**
-     * Create an employee and automatically provision a user account.
+     * Create an employee and optionally provision a user account.
      *
      * @param  array<string,mixed>  $data
-     * @return array{employee: Employee, temp_password: string}
+     * @return array{employee: Employee, temp_password: string|null}
      */
     public function create(array $data): array
     {
         return DB::transaction(function () use ($data) {
             $profile = $data['profile'] ?? null;
-            $password = $data['password'] ?? '12345678';
-            unset($data['profile'], $data['password']);
+            $createAccount = (bool) ($data['create_account'] ?? false);
+            unset($data['profile'], $data['create_account']);
 
-            // Bail if a user account already exists for this email.
-            if (User::where('email', $data['email'])->exists()) {
-                throw ValidationException::withMessages([
-                    'email' => ['A user account with this email already exists.'],
+            $userId = null;
+            $tempPassword = null;
+
+            if ($createAccount) {
+                if (User::where('email', $data['email'])->exists()) {
+                    throw ValidationException::withMessages([
+                        'email' => ['A user account with this email already exists.'],
+                    ]);
+                }
+
+                $tempPassword = '12345678';
+
+                $user = User::create([
+                    'name' => trim("{$data['first_name']} {$data['last_name']}"),
+                    'email' => $data['email'],
+                    'password' => Hash::make($tempPassword),
+                    'status' => 'active',
+                    'tenant_id' => auth()->user()->tenant_id,
+                    'force_password_change' => true,
                 ]);
+                $user->assignRole('employee');
+
+                $userId = $user->id;
             }
 
-            $user = User::create([
-                'name' => trim("{$data['first_name']} {$data['last_name']}"),
-                'email' => $data['email'],
-                'password' => Hash::make($password),
-                'status' => 'active',
-                'force_password_change' => true,
-            ]);
-            $user->assignRole('employee');
-
-            $data['user_id'] = $user->id;
+            $data['user_id'] = $userId;
 
             /** @var Employee $employee */
             $employee = $this->repository->create($data);
@@ -60,7 +69,7 @@ class EmployeeService
 
             return [
                 'employee' => $employee->load('department', 'position', 'profile', 'user'),
-                'temp_password' => $password,
+                'temp_password' => $tempPassword,
             ];
         });
     }
@@ -138,6 +147,7 @@ class EmployeeService
                 'email' => $employee->email,
                 'password' => Hash::make($password),
                 'status' => 'active',
+                'tenant_id' => auth()->user()->tenant_id,
                 'force_password_change' => true,
             ]);
             $user->assignRole('employee');

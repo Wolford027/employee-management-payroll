@@ -3,6 +3,9 @@
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
+use App\Models\Tenant;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 
 function employeePayload(array $overrides = []): array
 {
@@ -78,4 +81,29 @@ it('forbids employees from creating employees', function () {
     actingAsRole('employee');
 
     $this->postJson('/api/employees', employeePayload())->assertForbidden();
+});
+
+it('creates an employee without a user account when create_account is false', function () {
+    (new RolePermissionSeeder)->run();
+
+    $tenant = Tenant::factory()->create();
+    $owner = User::factory()->create(['tenant_id' => $tenant->id, 'is_owner' => true]);
+    $owner->assignRole('hr');
+
+    $dept = Department::factory()->create(['tenant_id' => $tenant->id]);
+    $pos = Position::factory()->create(['tenant_id' => $tenant->id, 'department_id' => $dept->id]);
+
+    $this->actingAs($owner)->postJson('/api/employees', [
+        'employee_code' => 'EMP-T'.fake()->unique()->numberBetween(1000, 9999),
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'john.doe@acme.com',
+        'salary' => 50000,
+        'employment_type' => 'full_time',
+        'department_id' => $dept->id,
+        'position_id' => $pos->id,
+        'create_account' => false,
+    ])->assertStatus(201);
+
+    expect(User::where('email', 'john.doe@acme.com')->exists())->toBeFalse();
 });

@@ -26,6 +26,8 @@ class StoreEmployeeRequest extends FormRequest
             'status' => ['sometimes', 'in:active,inactive,archived'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'position_id' => ['nullable', 'exists:positions,id'],
+            // Optional: whether to create a linked user account for the employee.
+            'create_account' => ['sometimes', 'boolean'],
             // Optional: HR can set a specific initial password; otherwise auto-generated.
             'password' => ['sometimes', 'string', 'min:8'],
 
