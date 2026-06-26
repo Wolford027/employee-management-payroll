@@ -27,7 +27,7 @@ class UserEmployeeSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'System Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'status' => 'active',
                 'tenant_id' => null,
                 'is_owner' => false,
@@ -111,7 +111,7 @@ class UserEmployeeSeeder extends Seeder
             ['email' => $email],
             [
                 'name' => $name,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'status' => 'active',
                 'tenant_id' => $this->tenantId,
                 'is_owner' => $isOwner,
