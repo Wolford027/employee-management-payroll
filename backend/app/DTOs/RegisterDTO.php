@@ -8,6 +8,7 @@ class RegisterDTO
         public readonly string $name,
         public readonly string $email,
         public readonly string $password,
+        public readonly string $companyName,
     ) {}
 
     /** @param  array<string,mixed>  $data */
@@ -17,6 +18,7 @@ class RegisterDTO
             name: $data['name'],
             email: $data['email'],
             password: $data['password'],
+            companyName: $data['company_name'],
         );
     }
 }

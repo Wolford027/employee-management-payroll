@@ -12,6 +12,7 @@ it('registers a new user and returns a token', function () {
     $response = $this->postJson('/api/auth/register', [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
+        'company_name' => 'Test Company',
         'password' => 'Password123!',
         'password_confirmation' => 'Password123!',
     ]);
@@ -19,7 +20,7 @@ it('registers a new user and returns a token', function () {
     $response->assertCreated()
         ->assertJsonStructure(['user' => ['id', 'email', 'roles'], 'token']);
 
-    expect($response->json('user.roles'))->toContain('employee');
+    expect($response->json('user.roles'))->toContain('hr');
     $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
 });
 

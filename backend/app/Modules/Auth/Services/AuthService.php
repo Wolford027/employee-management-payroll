@@ -4,8 +4,10 @@ namespace App\Modules\Auth\Services;
 
 use App\DTOs\LoginDTO;
 use App\DTOs\RegisterDTO;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -14,25 +16,36 @@ use Illuminate\Validation\ValidationException;
 class AuthService
 {
     /**
-     * Register a new account and issue an API token.
+     * Register a new owner account, creating a tenant in the same transaction.
      *
      * @return array{user: User, token: string}
      */
     public function register(RegisterDTO $dto): array
     {
-        $user = User::create([
-            'name' => $dto->name,
-            'email' => $dto->email,
-            'password' => Hash::make($dto->password),
-            'status' => 'active',
-        ]);
+        return DB::transaction(function () use ($dto) {
+            $slug = Str::slug($dto->companyName).'-'.Str::lower(Str::random(6));
 
-        // New self-service accounts default to the lowest-privilege role.
-        $user->assignRole('employee');
+            $tenant = Tenant::create([
+                'name' => $dto->companyName,
+                'slug' => $slug,
+                'status' => 'active',
+            ]);
 
-        $token = $user->createToken('web')->plainTextToken;
+            $user = User::create([
+                'name' => $dto->name,
+                'email' => $dto->email,
+                'password' => Hash::make($dto->password),
+                'status' => 'active',
+                'tenant_id' => $tenant->id,
+                'is_owner' => true,
+            ]);
 
-        return ['user' => $user->load('roles', 'permissions'), 'token' => $token];
+            $user->assignRole('hr');
+
+            $token = $user->createToken('web')->plainTextToken;
+
+            return ['user' => $user->load('roles', 'permissions', 'tenant'), 'token' => $token];
+        });
     }
 
     /**
