@@ -27,3 +27,4 @@ require __DIR__.'/api/attendance.php';
 require __DIR__.'/api/leave.php';
 require __DIR__.'/api/payroll.php';
 require __DIR__.'/api/report.php';
+require __DIR__.'/api/team.php';

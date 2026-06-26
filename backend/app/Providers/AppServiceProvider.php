@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Policies\UserPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, string $ability) {
             return $user->hasRole('super-admin') ? true : null;
         });
+
+        Gate::policy(User::class, UserPolicy::class);
 
         // Password-reset links point at the Next.js frontend, not a Blade page.
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {
