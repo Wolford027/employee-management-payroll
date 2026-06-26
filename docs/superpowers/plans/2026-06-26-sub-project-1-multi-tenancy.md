@@ -424,17 +424,22 @@ public function definition(): array
 
 Add to imports: `use App\Models\Tenant;`
 
-- [ ] **Step 2: Add `tenant_id` to each domain factory's `definition()` return array**
+- [ ] **Step 2: Add a `forTenant()` state to each domain factory — do NOT add to `definition()`**
 
-Pattern to add to each factory:
+Do NOT add `'tenant_id'` to `definition()` on domain factories. Instead add this state method to each:
 
 ```php
-'tenant_id' => Tenant::factory(),
+use App\Models\Tenant;
+
+public function forTenant(Tenant $tenant): static
+{
+    return $this->state(['tenant_id' => $tenant->id]);
+}
 ```
 
-Do this for every factory that corresponds to a model with `BelongsToTenant`: `DepartmentFactory`, `PositionFactory`, `EmployeeFactory`, `AttendanceRecordFactory`, `LeaveTypeFactory`, `LeaveRequestFactory`, `AllowanceFactory`, `DeductionFactory`, `PayrollPeriodFactory`, `PayrollFactory`, `PayrollItemFactory`, `PayslipFactory`.
+Do this for every factory whose model uses `BelongsToTenant`: `DepartmentFactory`, `PositionFactory`, `EmployeeFactory`, `AttendanceRecordFactory`, `LeaveTypeFactory`, `LeaveRequestFactory`, `AllowanceFactory`, `DeductionFactory`, `PayrollPeriodFactory`, `PayrollFactory`, `PayrollItemFactory`, `PayslipFactory`.
 
-Add import `use App\Models\Tenant;` to each factory file.
+> **Why not `definition()`?** If `tenant_id` is set by the factory before `Model::creating` fires, the `BelongsToTenant` hook sees a non-null `tenant_id` and does nothing — so `actingAs($user)` tests would get a random new tenant instead of the auth user's tenant. Keeping `tenant_id` absent from `definition()` lets the hook do the right thing when auth context is present; tests without auth pass `['tenant_id' => $id]` explicitly (as all seeders already do).
 
 - [ ] **Step 3: Write a quick smoke test**
 
