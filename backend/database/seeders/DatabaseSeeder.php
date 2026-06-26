@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         $this->command->newLine();
         $this->command->info('Demo tenant: Demo Company (slug: demo)');
-        $this->command->info('Demo logins (password: "password"):');
+        $this->command->info('Demo logins (password: "12345678"):');
         $this->command->line('  Super Admin : admin@example.com  (no tenant — system account)');
         $this->command->line('  Owner       : owner@example.com');
         $this->command->line('  HR          : hr1@example.com / hr2@example.com');
