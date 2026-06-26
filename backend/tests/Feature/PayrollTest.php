@@ -5,6 +5,7 @@ use App\Models\Deduction;
 use App\Models\Employee;
 use App\Models\Payroll;
 use App\Models\PayrollPeriod;
+use App\Models\Payslip;
 
 it('generates payroll for all active employees', function () {
     actingAsSuperAdmin();
@@ -78,7 +79,7 @@ it('downloads a payslip as a PDF', function () {
     $payroll = Payroll::factory()->create(['employee_id' => $employee->id]);
     $this->postJson("/api/payrolls/{$payroll->id}/payslip")->assertCreated();
 
-    $payslipId = \App\Models\Payslip::where('payroll_id', $payroll->id)->value('id');
+    $payslipId = Payslip::where('payroll_id', $payroll->id)->value('id');
 
     $response = $this->get("/api/payslips/{$payslipId}/download");
     $response->assertOk();

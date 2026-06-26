@@ -29,7 +29,7 @@ class EmployeeService
     public function create(array $data): array
     {
         return DB::transaction(function () use ($data) {
-            $profile  = $data['profile'] ?? null;
+            $profile = $data['profile'] ?? null;
             $password = $data['password'] ?? '12345678';
             unset($data['profile'], $data['password']);
 
@@ -41,10 +41,10 @@ class EmployeeService
             }
 
             $user = User::create([
-                'name'                  => trim("{$data['first_name']} {$data['last_name']}"),
-                'email'                 => $data['email'],
-                'password'              => Hash::make($password),
-                'status'                => 'active',
+                'name' => trim("{$data['first_name']} {$data['last_name']}"),
+                'email' => $data['email'],
+                'password' => Hash::make($password),
+                'status' => 'active',
                 'force_password_change' => true,
             ]);
             $user->assignRole('employee');
@@ -59,7 +59,7 @@ class EmployeeService
             }
 
             return [
-                'employee'      => $employee->load('department', 'position', 'profile', 'user'),
+                'employee' => $employee->load('department', 'position', 'profile', 'user'),
                 'temp_password' => $password,
             ];
         });
@@ -80,7 +80,7 @@ class EmployeeService
                 }
                 if (isset($data['first_name']) || isset($data['last_name'])) {
                     $first = $data['first_name'] ?? $employee->first_name;
-                    $last  = $data['last_name']  ?? $employee->last_name;
+                    $last = $data['last_name'] ?? $employee->last_name;
                     $userPatch['name'] = trim("{$first} {$last}");
                 }
                 if ($userPatch) {
@@ -134,10 +134,10 @@ class EmployeeService
             $password = '12345678';
 
             $user = User::create([
-                'name'                  => $employee->full_name,
-                'email'                 => $employee->email,
-                'password'              => Hash::make($password),
-                'status'                => 'active',
+                'name' => $employee->full_name,
+                'email' => $employee->email,
+                'password' => Hash::make($password),
+                'status' => 'active',
                 'force_password_change' => true,
             ]);
             $user->assignRole('employee');
@@ -145,7 +145,7 @@ class EmployeeService
             $employee->update(['user_id' => $user->id]);
 
             return [
-                'employee'      => $employee->fresh(['department', 'position', 'profile', 'user']),
+                'employee' => $employee->fresh(['department', 'position', 'profile', 'user']),
                 'temp_password' => $password,
             ];
         });

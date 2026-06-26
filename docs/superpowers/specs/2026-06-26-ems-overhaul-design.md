@@ -126,7 +126,7 @@ No API key required. Shown as a small thumbnail in the attendance detail view.
 
 ### New `payroll_settings` table
 
-One row per tenant:
+One row per tenant (SSS uses bracket lookup — no rate column needed):
 
 ```
 id | tenant_id | philhealth_rate | pagibig_employee_rate | pagibig_employer_rate | tax_table | timestamps

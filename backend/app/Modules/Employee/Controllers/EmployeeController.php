@@ -30,9 +30,9 @@ class EmployeeController extends Controller
         $result = $this->service->create($request->validated());
 
         return response()->json([
-            'data'    => EmployeeResource::make($result['employee']),
+            'data' => EmployeeResource::make($result['employee']),
             'account' => [
-                'email'         => $result['employee']->email,
+                'email' => $result['employee']->email,
                 'temp_password' => $result['temp_password'],
             ],
             'message' => 'Employee created and account provisioned.',
@@ -77,9 +77,9 @@ class EmployeeController extends Controller
         $result = $this->service->createAccount($employee);
 
         return response()->json([
-            'data'    => EmployeeResource::make($result['employee']),
+            'data' => EmployeeResource::make($result['employee']),
             'account' => [
-                'email'         => $result['employee']->email,
+                'email' => $result['employee']->email,
                 'temp_password' => $result['temp_password'],
             ],
             'message' => 'Account created successfully.',
