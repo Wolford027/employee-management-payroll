@@ -7,10 +7,12 @@ import type {
   Employee,
   LeaveRequest,
   LeaveType,
+  Paginated,
   Payroll,
   PayrollPeriod,
   Payslip,
   Position,
+  TeamMember,
 } from "@/types";
 
 // Allowance/Deduction are simple lookup lists; typed loosely here.
@@ -90,4 +92,14 @@ export const portal = {
   payslips:   () => api.get<{ data: Payslip[] }>("/me/payslips").then((r) => r.data.data),
   leaves:     () => api.get<{ data: LeaveRequest[] }>("/me/leaves").then((r) => r.data.data),
   attendance: () => api.get<{ data: AttendanceRecord[] }>("/me/attendance").then((r) => r.data.data),
+};
+
+// Team members (tenant user management).
+export const teamApi = {
+  list: (params?: Record<string, unknown>) =>
+    api.get<Paginated<TeamMember>>("/team-members", { params }).then((r) => r.data),
+  create: (data: { name: string; email: string; role: string }) =>
+    api.post<{ data: TeamMember }>("/team-members", data).then((r) => r.data),
+  remove: (id: number) =>
+    api.delete(`/team-members/${id}`).then((r) => r.data),
 };

@@ -7,6 +7,7 @@ export interface User {
   name: string;
   email: string;
   status: string;
+  is_owner?: boolean;
   roles: Role[];
   permissions: string[];
   force_password_change?: boolean;
@@ -18,6 +19,25 @@ export interface User {
     position_id: number | null;
   } | null;
   created_at?: string;
+}
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  email: string;
+  status: string;
+  is_owner: boolean;
+  force_password_change: boolean;
+  roles: Role[];
+  created_at: string;
+}
+
+export interface Tenant {
+  id: number;
+  name: string;
+  slug: string;
+  status: string;
+  created_at: string;
 }
 
 export interface AuthResponse {
