@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->unsignedSmallInteger('days')->default(1);
             $table->text('reason')->nullable();
-            // Simple status field only â€” no approval engine in V1.
+            // Simple status field only — no approval engine in V1.
             $table->string('status')->default('pending')->index(); // pending | approved | rejected | cancelled
             $table->timestamps();
             $table->softDeletes();
