@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeProfile;
 use App\Models\Position;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,69 +16,96 @@ class UserEmployeeSeeder extends Seeder
 {
     private int $sequence = 0;
 
+    private int $tenantId;
+
     public function run(): void
     {
-        $departments = Department::pluck('id', 'code'); // ['IT' => 1, ...]
-        $deptCodes = $departments->keys()->all();
+        $this->tenantId = Tenant::where('slug', 'demo')->firstOrFail()->id;
 
-        // 1. Super Admin (also an IT employee so the portal works for them).
+        // Super-admin: system account, no tenant, no employee record.
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'System Administrator',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'tenant_id' => null,
+                'is_owner' => false,
+                'email_verified_at' => now(),
+            ],
+        );
+        $superAdmin->syncRoles(['super-admin']);
+
+        // Demo tenant owner.
         $this->makeUserWithEmployee(
-            name: 'System Administrator',
-            email: 'admin@example.com',
-            role: 'super-admin',
+            name: 'Demo Owner',
+            email: 'owner@example.com',
+            role: 'hr',
+            isOwner: true,
             deptCode: 'IT',
             level: 'Senior',
         );
 
-        // 2. Two HR users.
+        // Two HR users.
         for ($i = 1; $i <= 2; $i++) {
             $this->makeUserWithEmployee(
                 name: fake()->name(),
                 email: "hr{$i}@example.com",
                 role: 'hr',
+                isOwner: false,
                 deptCode: 'HR',
                 level: $i === 1 ? 'Senior' : 'Mid',
             );
         }
 
-        // 3. Three Managers (across operational departments — using department codes).
+        // Three managers (across operational departments).
         $managerDepts = ['IT', 'SLS', 'MKT'];
         for ($i = 1; $i <= 3; $i++) {
             $this->makeUserWithEmployee(
                 name: fake()->name(),
                 email: "manager{$i}@example.com",
                 role: 'manager',
+                isOwner: false,
                 deptCode: $managerDepts[$i - 1],
                 level: 'Senior',
             );
         }
 
-        // 4. Thirty employees — the first one is the documented demo login.
+        // Demo employee + 29 random.
         $this->makeUserWithEmployee(
             name: 'Demo Employee',
             email: 'employee@example.com',
             role: 'employee',
+            isOwner: false,
             deptCode: 'IT',
             level: 'Junior',
         );
 
+        $deptCodes = Department::where('tenant_id', $this->tenantId)->pluck('code')->all();
         for ($i = 1; $i <= 29; $i++) {
             $this->makeUserWithEmployee(
                 name: fake()->name(),
                 email: "employee{$i}@example.com",
                 role: 'employee',
+                isOwner: false,
                 deptCode: fake()->randomElement($deptCodes),
                 level: fake()->randomElement(['Junior', 'Junior', 'Mid', 'Senior']),
             );
         }
     }
 
-    private function makeUserWithEmployee(string $name, string $email, string $role, string $deptCode, string $level): void
-    {
+    private function makeUserWithEmployee(
+        string $name,
+        string $email,
+        string $role,
+        bool $isOwner,
+        string $deptCode,
+        string $level,
+    ): void {
         $this->sequence++;
 
-        $department = Department::where('code', $deptCode)->first();
-        $position = Position::where('department_id', $department->id)->where('level', $level)->first();
+        $department = Department::where('code', $deptCode)->where('tenant_id', $this->tenantId)->firstOrFail();
+        $position = Position::where('department_id', $department->id)->where('level', $level)->where('tenant_id', $this->tenantId)->first();
 
         $user = User::firstOrCreate(
             ['email' => $email],
@@ -85,20 +113,23 @@ class UserEmployeeSeeder extends Seeder
                 'name' => $name,
                 'password' => Hash::make('password'),
                 'status' => 'active',
+                'tenant_id' => $this->tenantId,
+                'is_owner' => $isOwner,
                 'email_verified_at' => now(),
-            ]
+            ],
         );
         $user->syncRoles([$role]);
 
         [$first, $last] = $this->splitName($name);
-        $salary = (float) $position->base_salary + fake()->numberBetween(0, 8000);
+        $salary = (float) ($position?->base_salary ?? 40000) + fake()->numberBetween(0, 8000);
 
         $employee = Employee::firstOrCreate(
             ['user_id' => $user->id],
             [
                 'employee_code' => 'EMP-'.str_pad((string) $this->sequence, 5, '0', STR_PAD_LEFT),
+                'tenant_id' => $this->tenantId,
                 'department_id' => $department->id,
-                'position_id' => $position->id,
+                'position_id' => $position?->id,
                 'first_name' => $first,
                 'last_name' => $last,
                 'email' => $email,
@@ -107,7 +138,7 @@ class UserEmployeeSeeder extends Seeder
                 'date_hired' => fake()->dateTimeBetween('-6 years', '-1 month')->format('Y-m-d'),
                 'employment_type' => 'full_time',
                 'status' => 'active',
-            ]
+            ],
         );
 
         EmployeeProfile::firstOrCreate(
@@ -124,7 +155,7 @@ class UserEmployeeSeeder extends Seeder
                 'bank_name' => fake()->randomElement(['First National', 'Metro Bank', 'Union Savings']),
                 'bank_account_number' => fake()->numerify('##########'),
                 'tax_id' => fake()->numerify('TIN-#########'),
-            ]
+            ],
         );
     }
 

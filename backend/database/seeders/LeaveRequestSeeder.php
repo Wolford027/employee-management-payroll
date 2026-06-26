@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\Models\LeaveType;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -12,8 +13,9 @@ class LeaveRequestSeeder extends Seeder
 {
     public function run(): void
     {
-        $leaveTypeIds = LeaveType::pluck('id')->all();
-        $employees = Employee::inRandomOrder()->take(20)->get();
+        $tenant = Tenant::where('slug', 'demo')->firstOrFail();
+        $leaveTypeIds = LeaveType::where('tenant_id', $tenant->id)->pluck('id')->all();
+        $employees = Employee::where('tenant_id', $tenant->id)->inRandomOrder()->take(20)->get();
 
         foreach ($employees as $employee) {
             $count = fake()->numberBetween(1, 2);
@@ -24,6 +26,7 @@ class LeaveRequestSeeder extends Seeder
                 $end = (clone $start)->addDays($days - 1);
 
                 LeaveRequest::create([
+                    'tenant_id' => $tenant->id,
                     'employee_id' => $employee->id,
                     'leave_type_id' => fake()->randomElement($leaveTypeIds),
                     'start_date' => $start->format('Y-m-d'),

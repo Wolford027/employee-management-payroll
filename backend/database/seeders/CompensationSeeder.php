@@ -4,12 +4,15 @@ namespace Database\Seeders;
 
 use App\Models\Allowance;
 use App\Models\Deduction;
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 
 class CompensationSeeder extends Seeder
 {
     public function run(): void
     {
+        $tenant = Tenant::where('slug', 'demo')->firstOrFail();
+
         $allowances = [
             ['name' => 'Transport Allowance', 'code' => 'ALW-TRN', 'amount' => 150, 'is_taxable' => false],
             ['name' => 'Meal Allowance', 'code' => 'ALW-MEA', 'amount' => 120, 'is_taxable' => false],
@@ -18,8 +21,8 @@ class CompensationSeeder extends Seeder
 
         foreach ($allowances as $data) {
             Allowance::firstOrCreate(
-                ['code' => $data['code']],
-                $data + ['calculation_type' => 'fixed', 'status' => 'active']
+                ['code' => $data['code'], 'tenant_id' => $tenant->id],
+                $data + ['calculation_type' => 'fixed', 'status' => 'active', 'tenant_id' => $tenant->id]
             );
         }
 
@@ -31,8 +34,8 @@ class CompensationSeeder extends Seeder
 
         foreach ($deductions as $data) {
             Deduction::firstOrCreate(
-                ['code' => $data['code']],
-                $data + ['calculation_type' => 'fixed', 'status' => 'active']
+                ['code' => $data['code'], 'tenant_id' => $tenant->id],
+                $data + ['calculation_type' => 'fixed', 'status' => 'active', 'tenant_id' => $tenant->id]
             );
         }
     }

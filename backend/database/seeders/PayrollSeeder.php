@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Payroll;
 use App\Models\PayrollPeriod;
 use App\Models\Payslip;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -15,18 +16,20 @@ class PayrollSeeder extends Seeder
 {
     public function run(): void
     {
-        $allowances = Allowance::where('status', 'active')->get();
-        $deductions = Deduction::where('status', 'active')->get();
-        $employees = Employee::where('status', 'active')->get();
+        $tenant = Tenant::where('slug', 'demo')->firstOrFail();
+        $allowances = Allowance::where('tenant_id', $tenant->id)->where('status', 'active')->get();
+        $deductions = Deduction::where('tenant_id', $tenant->id)->where('status', 'active')->get();
+        $employees = Employee::where('tenant_id', $tenant->id)->where('status', 'active')->get();
 
         // Three most recent completed monthly periods.
-        $periods = collect(range(3, 1))->map(function (int $monthsAgo) {
+        $periods = collect(range(3, 1))->map(function (int $monthsAgo) use ($tenant) {
             $start = Carbon::today()->subMonths($monthsAgo)->startOfMonth();
             $end = (clone $start)->endOfMonth();
 
             return PayrollPeriod::firstOrCreate(
-                ['name' => $start->format('F Y').' Payroll'],
+                ['name' => $start->format('F Y').' Payroll', 'tenant_id' => $tenant->id],
                 [
+                    'tenant_id' => $tenant->id,
                     'cycle' => 'monthly',
                     'start_date' => $start->format('Y-m-d'),
                     'end_date' => $end->format('Y-m-d'),
@@ -62,6 +65,7 @@ class PayrollSeeder extends Seeder
                 $payroll = Payroll::firstOrCreate(
                     ['payroll_period_id' => $period->id, 'employee_id' => $employee->id],
                     [
+                        'tenant_id' => $tenant->id,
                         'basic_salary' => $basic,
                         'total_allowances' => $totalAllowances,
                         'total_deductions' => $totalDeductions,
@@ -73,7 +77,7 @@ class PayrollSeeder extends Seeder
 
                 if ($payroll->items()->count() === 0) {
                     foreach ($items as $item) {
-                        $payroll->items()->create($item);
+                        $payroll->items()->create($item + ['tenant_id' => $tenant->id]);
                     }
                 }
 
@@ -81,6 +85,7 @@ class PayrollSeeder extends Seeder
                 Payslip::firstOrCreate(
                     ['payroll_id' => $payroll->id],
                     [
+                        'tenant_id' => $tenant->id,
                         'employee_id' => $employee->id,
                         'payslip_number' => 'PS-'.$period->start_date->format('Ym').'-'.str_pad((string) $payslipCounter, 5, '0', STR_PAD_LEFT),
                         'file_path' => null,

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\Position;
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 
 class PositionSeeder extends Seeder
@@ -26,7 +27,9 @@ class PositionSeeder extends Seeder
 
     public function run(): void
     {
-        foreach (Department::all() as $department) {
+        $tenant = Tenant::where('slug', 'demo')->firstOrFail();
+
+        foreach (Department::where('tenant_id', $tenant->id)->get() as $department) {
             $title = self::TITLES[$department->code] ?? 'Associate';
 
             foreach (self::LEVELS as $level => $baseSalary) {
@@ -35,11 +38,13 @@ class PositionSeeder extends Seeder
                         'department_id' => $department->id,
                         'level' => $level,
                         'title' => "{$level} {$title}",
+                        'tenant_id' => $tenant->id,
                     ],
                     [
                         'base_salary' => $baseSalary,
                         'description' => "{$level} level role in {$department->name}",
                         'status' => 'active',
+                        'tenant_id' => $tenant->id,
                     ]
                 );
             }

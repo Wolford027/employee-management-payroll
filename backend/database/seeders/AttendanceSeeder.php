@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AttendanceRecord;
 use App\Models\Employee;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -11,7 +12,8 @@ class AttendanceSeeder extends Seeder
 {
     public function run(): void
     {
-        $employees = Employee::all();
+        $tenant = Tenant::where('slug', 'demo')->firstOrFail();
+        $employees = Employee::where('tenant_id', $tenant->id)->get();
 
         // Last 14 calendar days, weekdays only.
         $days = collect(range(0, 13))
@@ -38,6 +40,7 @@ class AttendanceSeeder extends Seeder
                 }
 
                 $rows[] = [
+                    'tenant_id' => $tenant->id,
                     'employee_id' => $employee->id,
                     'date' => $day->format('Y-m-d'),
                     'time_in' => $timeIn,
