@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Payroll;
 use App\Models\PayrollItem;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,5 +26,10 @@ class PayrollItemFactory extends Factory
                 : fake()->randomElement(['Tax', 'Insurance', 'Pension']),
             'amount' => fake()->numberBetween(50, 600),
         ];
+    }
+
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state(['tenant_id' => $tenant->id]);
     }
 }

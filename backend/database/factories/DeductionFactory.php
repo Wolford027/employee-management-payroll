@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Deduction;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -24,5 +25,10 @@ class DeductionFactory extends Factory
             'amount' => fake()->numberBetween(20, 400),
             'status' => 'active',
         ];
+    }
+
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state(['tenant_id' => $tenant->id]);
     }
 }

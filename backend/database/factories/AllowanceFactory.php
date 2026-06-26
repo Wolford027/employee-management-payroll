@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Allowance;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -25,5 +26,10 @@ class AllowanceFactory extends Factory
             'is_taxable' => fake()->boolean(30),
             'status' => 'active',
         ];
+    }
+
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state(['tenant_id' => $tenant->id]);
     }
 }

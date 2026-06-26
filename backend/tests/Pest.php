@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -21,12 +27,6 @@ pest()->extend(TestCase::class)
 |--------------------------------------------------------------------------
 */
 
-use App\Models\User;
-use Database\Seeders\RolePermissionSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
-use Tests\TestCase;
-
 /** Seed roles/permissions and authenticate as a fresh super-admin user. */
 function actingAsSuperAdmin(): User
 {
@@ -46,6 +46,14 @@ function actingAsRole(string $role): User
 
     $user = User::factory()->create();
     $user->assignRole($role);
+    Sanctum::actingAs($user);
+
+    return $user;
+}
+
+/** Authenticate as the given user. */
+function actingAs(User $user): User
+{
     Sanctum::actingAs($user);
 
     return $user;

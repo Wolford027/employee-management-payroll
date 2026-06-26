@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\LeaveType;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -24,5 +25,10 @@ class LeaveTypeFactory extends Factory
             'description' => fake()->sentence(),
             'status' => 'active',
         ];
+    }
+
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state(['tenant_id' => $tenant->id]);
     }
 }

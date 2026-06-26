@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\PayrollPeriod;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,5 +27,10 @@ class PayrollPeriodFactory extends Factory
             'pay_date' => (clone $end)->addDays(3)->format('Y-m-d'),
             'status' => 'completed',
         ];
+    }
+
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state(['tenant_id' => $tenant->id]);
     }
 }
