@@ -107,3 +107,34 @@ it('creates an employee without a user account when create_account is false', fu
 
     expect(User::where('email', 'john.doe@acme.com')->exists())->toBeFalse();
 });
+
+it('creates an employee with a user account when create_account is true', function () {
+    (new RolePermissionSeeder)->run();
+
+    $tenant = Tenant::factory()->create();
+    $owner = User::factory()->create(['tenant_id' => $tenant->id, 'is_owner' => true]);
+    $owner->assignRole('hr');
+
+    $dept = Department::factory()->create(['tenant_id' => $tenant->id]);
+    $pos = Position::factory()->create(['tenant_id' => $tenant->id, 'department_id' => $dept->id]);
+
+    $response = $this->actingAs($owner)->postJson('/api/employees', [
+        'employee_code' => 'EMP-T'.fake()->unique()->numberBetween(1000, 9999),
+        'first_name' => 'Jane',
+        'last_name' => 'Smith',
+        'email' => 'jane.smith@acme.com',
+        'salary' => 55000,
+        'employment_type' => 'full_time',
+        'department_id' => $dept->id,
+        'position_id' => $pos->id,
+        'create_account' => true,
+    ])->assertStatus(201);
+
+    $employee = Employee::where('email', 'jane.smith@acme.com')->first();
+    expect($employee)->not->toBeNull();
+
+    $user = User::where('email', 'jane.smith@acme.com')->first();
+    expect($user)->not->toBeNull();
+    expect($employee->user_id)->toBe($user->id);
+    expect($user->force_password_change)->toBeTrue();
+});
