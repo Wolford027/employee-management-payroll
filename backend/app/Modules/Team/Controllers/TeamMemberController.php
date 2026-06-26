@@ -33,6 +33,10 @@ class TeamMemberController extends Controller
 
     public function destroy(User $teamMember): JsonResponse
     {
+        if ($teamMember->tenant_id !== auth()->user()->tenant_id) {
+            abort(404);
+        }
+
         $this->authorize('delete', $teamMember);
 
         $this->service->delete($teamMember);

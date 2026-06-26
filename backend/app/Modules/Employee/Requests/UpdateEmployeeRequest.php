@@ -27,8 +27,8 @@ class UpdateEmployeeRequest extends FormRequest
             'date_hired' => ['nullable', 'date'],
             'employment_type' => ['sometimes', 'in:full_time,part_time,contract'],
             'status' => ['sometimes', 'in:active,inactive,archived'],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'position_id' => ['nullable', 'exists:positions,id'],
+            'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('tenant_id', auth()->user()->tenant_id)],
+            'position_id' => ['nullable', 'integer', Rule::exists('positions', 'id')->where('tenant_id', auth()->user()->tenant_id)],
 
             'profile' => ['sometimes', 'array'],
             'profile.birth_date' => ['nullable', 'date'],

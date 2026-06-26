@@ -100,6 +100,6 @@ export const teamApi = {
     api.get<Paginated<TeamMember>>("/team-members", { params }).then((r) => r.data),
   create: (data: { name: string; email: string; role: string }) =>
     api.post<{ data: TeamMember }>("/team-members", data).then((r) => r.data),
-  remove: (id: number) =>
+  remove: (id: number): Promise<{ message: string }> =>
     api.delete(`/team-members/${id}`).then((r) => r.data),
 };

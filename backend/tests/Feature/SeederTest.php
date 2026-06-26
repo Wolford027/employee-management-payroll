@@ -16,7 +16,7 @@ it('seeds a complete, usable dataset', function () {
 
     // Users by role match the spec.
     expect(User::role('super-admin')->count())->toBe(1);
-    expect(User::role('hr')->count())->toBe(2);
+    expect(User::role('hr')->count())->toBe(3); // owner + hr1 + hr2
     expect(User::role('manager')->count())->toBe(3);
     expect(User::role('employee')->count())->toBe(30);
 
@@ -36,7 +36,7 @@ it('seeds a complete, usable dataset', function () {
 it('lets the seeded admin log in', function () {
     $this->seed(DatabaseSeeder::class);
 
-    $this->postJson('/api/auth/login', ['email' => 'admin@example.com', 'password' => 'password'])
+    $this->postJson('/api/auth/login', ['email' => 'admin@example.com', 'password' => '12345678'])
         ->assertOk()
         ->assertJsonPath('user.roles.0', 'super-admin');
 });

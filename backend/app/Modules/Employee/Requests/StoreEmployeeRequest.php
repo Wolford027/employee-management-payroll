@@ -3,6 +3,7 @@
 namespace App\Modules\Employee\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreEmployeeRequest extends FormRequest
 {
@@ -24,8 +25,8 @@ class StoreEmployeeRequest extends FormRequest
             'date_hired' => ['nullable', 'date'],
             'employment_type' => ['sometimes', 'in:full_time,part_time,contract'],
             'status' => ['sometimes', 'in:active,inactive,archived'],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'position_id' => ['nullable', 'exists:positions,id'],
+            'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('tenant_id', auth()->user()->tenant_id)],
+            'position_id' => ['nullable', 'integer', Rule::exists('positions', 'id')->where('tenant_id', auth()->user()->tenant_id)],
             // Optional: whether to create a linked user account for the employee.
             'create_account' => ['sometimes', 'boolean'],
             // Optional: HR can set a specific initial password; otherwise auto-generated.

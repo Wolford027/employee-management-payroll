@@ -28,6 +28,7 @@ class UserResource extends JsonResource
                 'department_id' => $this->employee->department_id,
                 'position_id' => $this->employee->position_id,
             ] : null),
+            'is_owner' => (bool) $this->is_owner,
             'force_password_change' => (bool) $this->force_password_change,
             'created_at' => $this->created_at,
         ];

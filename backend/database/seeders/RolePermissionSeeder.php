@@ -32,6 +32,12 @@ class RolePermissionSeeder extends Seeder
             }
         }
 
+        // Team-member permissions (separate from the standard CRUD set).
+        $teamMemberPermissions = ['viewAny team-member', 'create team-member', 'delete team-member'];
+        foreach ($teamMemberPermissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        }
+
         // 2. Roles.
         $superAdmin = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);
         $hr = Role::firstOrCreate(['name' => 'hr', 'guard_name' => 'web']);
@@ -41,12 +47,13 @@ class RolePermissionSeeder extends Seeder
         // Super Admin: every permission (also bypassed via Gate::before in AuthServiceProvider).
         $superAdmin->syncPermissions(Permission::all());
 
-        // HR: full CRUD on everything except user administration.
+        // HR: full CRUD on everything except user administration + team-member management.
         $hr->syncPermissions(
             Permission::whereNot('name', 'like', '% user')->get()
         );
+        $hr->givePermissionTo(['viewAny team-member', 'create team-member', 'delete team-member']);
 
-        // Manager: read org data, manage attendance + leave, read payroll/reports.
+        // Manager: read org data, manage attendance + leave, read payroll/reports, view team.
         $manager->syncPermissions([
             'viewAny employee', 'view employee',
             'viewAny department', 'view department',
@@ -56,6 +63,7 @@ class RolePermissionSeeder extends Seeder
             'viewAny payroll', 'view payroll',
             'viewAny payslip', 'view payslip',
             'viewAny report', 'view report',
+            'viewAny team-member',
         ]);
 
         // Employee: view own payroll/payslip/attendance, manage own leave.
