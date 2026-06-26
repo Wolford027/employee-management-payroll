@@ -14,6 +14,7 @@ import {
   UserCircle,
   LogOut,
   ChevronRight,
+  Settings,
 } from "lucide-react";
 import { useAuth, useLogout } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -36,7 +37,41 @@ const NAV: NavItem[] = [
   { label: "Payroll", href: "/payroll", icon: Wallet, permission: "viewAny payroll" },
   { label: "Payslips", href: "/payslips", icon: FileText, permission: "viewAny payslip" },
   { label: "My Portal", href: "/portal", icon: UserCircle },
+  { label: "Team", href: "/settings/team", icon: Settings },
 ];
+
+function NavLink({
+  item,
+  pathname,
+}: {
+  item: NavItem;
+  pathname: string;
+}) {
+  const active = pathname === item.href || pathname.startsWith(item.href + "/");
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
+        active ? "text-yellow-400" : "text-slate-400 hover:text-white",
+      )}
+      style={
+        active
+          ? { background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.25)" }
+          : { border: "1px solid transparent" }
+      }
+    >
+      <item.icon
+        className={cn(
+          "h-4 w-4 shrink-0 transition-colors",
+          active ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300",
+        )}
+      />
+      <span className="flex-1">{item.label}</span>
+      {active && <ChevronRight className="h-3 w-3 text-yellow-400 shrink-0" />}
+    </Link>
+  );
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -55,43 +90,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 space-y-0.5 p-3 pt-4 overflow-y-auto">
-          {visibleNav.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
-                  active
-                    ? "text-yellow-400"
-                    : "text-slate-400 hover:text-white",
-                )}
-                style={
-                  active
-                    ? {
-                        background: "rgba(59,130,246,0.15)",
-                        border: "1px solid rgba(59,130,246,0.25)",
-                      }
-                    : {
-                        border: "1px solid transparent",
-                      }
-                }
-              >
-                <item.icon
-                  className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    active ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300",
-                  )}
-                />
-                <span className="flex-1">{item.label}</span>
-                {active && (
-                  <ChevronRight className="h-3 w-3 text-yellow-400 shrink-0" />
-                )}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 p-3 pt-4 overflow-y-auto">
+          <div className="space-y-0.5">
+            {visibleNav
+              .filter((i) => !i.href.startsWith("/settings"))
+              .map((item) => (
+                <NavLink key={item.href} item={item} pathname={pathname} />
+              ))}
+          </div>
+
+          {visibleNav.some((i) => i.href.startsWith("/settings")) && (
+            <>
+              <div className="my-2 border-t border-white/8" />
+              <p className="px-3 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Settings
+              </p>
+              <div className="space-y-0.5">
+                {visibleNav
+                  .filter((i) => i.href.startsWith("/settings"))
+                  .map((item) => (
+                    <NavLink key={item.href} item={item} pathname={pathname} />
+                  ))}
+              </div>
+            </>
+          )}
         </nav>
 
         {/* User card */}
