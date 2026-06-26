@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->string('name');                          // Sick | Vacation | Emergency
             $table->string('code')->unique();
             $table->unsignedSmallInteger('default_days')->default(0);

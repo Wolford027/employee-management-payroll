@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('allowances', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->string('name');
             $table->string('code')->unique();
             $table->string('calculation_type')->default('fixed'); // fixed | percentage

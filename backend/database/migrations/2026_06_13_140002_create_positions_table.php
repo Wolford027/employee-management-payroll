@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->string('title');
             $table->string('level')->default('Junior')->index(); // Junior | Mid | Senior
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('payroll_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->foreignId('payroll_id')->constrained('payrolls')->cascadeOnDelete();
             $table->string('type')->index();  // allowance | deduction | earning
             $table->string('label');

@@ -10,13 +10,14 @@ return new class extends Migration
     {
         Schema::create('leave_requests', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->foreignId('leave_type_id')->constrained('leave_types')->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
             $table->unsignedSmallInteger('days')->default(1);
             $table->text('reason')->nullable();
-            // Simple status field only — no approval engine in V1.
+            // Simple status field only â€” no approval engine in V1.
             $table->string('status')->default('pending')->index(); // pending | approved | rejected | cancelled
             $table->timestamps();
             $table->softDeletes();
